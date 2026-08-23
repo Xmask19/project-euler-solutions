@@ -17,14 +17,11 @@ https://en.wikipedia.org/wiki/Inclusion%E2%80%93exclusion_principle
 To find the cardinality of the union of n sets:
     1. Include the cardinalities of the sets.
     2. Exclude the cardinalities of the pairwise intersections.
-    3.Include the cardinalities of the triple-wise intersections.
+    3. Include the cardinalities of the triple-wise intersections.
     4. Exclude the cardinalities of the quadruple-wise intersections.
     5. Include the cardinalities of the quintuple-wise intersections.
     6. Continue, until the cardinality of the n-tuple-wise intersection is
        included (if n is odd) or excluded (n even).
-
-
-
 
 Example:
     >>> sum_multiples([3, 5], 1000)
@@ -36,40 +33,7 @@ from math import lcm
 from typing import List
 
 
-def sum_multiples(dividers: List[int], limit: int) -> int:
-    """
-    Return the sum of all multiples of any given divider below the limit.
-
-    Args:
-        dividers: A list of positive integers to check divisibility against.
-        limit: A non-negative integer representing the upper bound (exclusive).
-
-    Returns:
-        The sum of all integers in [0, limit)
-        divisible by at least one divider.
-
-    Raises:
-        TypeError: If arguments are of the wrong type.
-        ValueError: If limit is negative or a divider is zero/negative.
-    """
-    _validate_inputs(dividers, limit)
-    if dividers == []:
-        return 0
-    dividers = sorted(set(dividers))  # Removes repeated dividers
-
-    total = 0
-    # For each subset of dividers, we determine whether to add or subtract
-    # their sum based on the subset size. Odd include, even exclude.
-    for subset_length in range(1, len(dividers) + 1):
-        for combo in combinations(dividers, subset_length):
-            lcm_value = lcm(*combo)
-            if lcm_value < limit:
-                sign = 1 if subset_length % 2 == 1 else -1
-                total += sign * _sum_multiples_below(lcm_value, limit)
-    return total
-
-
-def _validate_inputs(dividers: List[int], limit: int) -> None:
+def _validate_inputs(divisors: List[int], limit: int) -> None:
     """
     Validate that inputs meet the expected requirements.
 
@@ -84,13 +48,13 @@ def _validate_inputs(dividers: List[int], limit: int) -> None:
     if limit < 0:
         raise ValueError("limit must be a non-negative integer")
 
-    # Check dividers
-    if not isinstance(dividers, list):
+    # Check divisors
+    if not isinstance(divisors, list):
         raise TypeError(
-            f"dividers must be a list, got {type(dividers).__name__}"
+            f"divisors must be a list, got {type(divisors).__name__}"
         )
 
-    for d in dividers:
+    for d in divisors:
         if not isinstance(d, int):
             raise TypeError(
                 f"each divisor must be an integer, got {type(d).__name__}"
@@ -115,6 +79,91 @@ def _sum_multiples_below(step: int, limit: int) -> int:
     return step * n * (n + 1) // 2
 
 
+def _sum_multiples_bruteforce(divisors: List[int], limit: int) -> int:
+    """
+    Return the sum of all numbers < limit divisible by at least one divisor.
+    Checks every number individually – O(limit * len(divisors)).
+    """
+    total = 0
+    for i in range(limit):
+        if any(i % d == 0 for d in divisors):
+            total += i
+    return total
+
+
+def sum_multiples(divisors: List[int], limit: int) -> int:
+    """
+    Return the sum of all multiples of any given divisor below the limit.
+
+    Args:
+        divisors: A list of positive integers to check divisibility against.
+        limit: A non-negative integer representing the upper bound (exclusive).
+
+    Returns:
+        The sum of all integers in [0, limit)
+        divisible by at least one divisor.
+
+    Raises:
+        TypeError: If arguments are of the wrong type.
+        ValueError: If limit is negative or a divisor is zero/negative.
+    """
+    _validate_inputs(divisors, limit)
+    if 1 in divisors:
+        return limit * (limit - 1) // 2
+
+    # Remove divisors that are >= limit, contribute no multiples below limit.
+    divisors = [d for d in divisors if d < limit]
+
+    # If there are no divisors, return 0.
+    if not divisors:
+        return 0
+    divisors = sorted(set(divisors))  # Removes repeated divisors
+
+    filtered_divisors = []
+    for i, d in enumerate(divisors):
+        is_redundant = False
+        # Check only smaller divisors (indices 0 .. i-1)
+        for j in range(i):
+            if d % divisors[j] == 0:
+                is_redundant = True
+                break
+        if not is_redundant:
+            filtered_divisors.append(d)
+    divisors = filtered_divisors
+
+    # For some examples, a large number of divisors and small lim,
+    # bruteforce is faster.
+
+    # ---- Algorithm selection based on estimated work ----
+    # Inclusion–exclusion cost: number of subsets (2^n)
+    ie_cost = 1 << len(divisors)   # 2^n
+
+    # Brute‑force cost: for each number below limit, check all divisors
+    bf_cost = limit * len(divisors)
+
+    if bf_cost < ie_cost:
+        return _sum_multiples_bruteforce(divisors, limit)
+
+    total = 0
+    # For each subset of divisors, we determine whether to add or subtract
+    # their sum based on the subset size. Odd include, even exclude.
+    for subset_length in range(1, len(divisors) + 1):
+        for combo in combinations(divisors, subset_length):
+            lcm_value = lcm(*combo)
+            if lcm_value < limit:
+                sign = 1 if subset_length % 2 == 1 else -1
+                total += sign * _sum_multiples_below(lcm_value, limit)
+    return total
+
+
 if __name__ == "__main__":
     print(sum_multiples([3, 5], 1000))  # 233168
     print(sum_multiples([3, 5, 7, 11], 1000000000))  # 292207792292207785
+
+    # First 20 primes (primitive set)
+    primes_20 = [
+        2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
+        31, 37, 41, 43, 47, 53, 59, 61, 67, 71
+    ]
+
+    print(sum_multiples(primes_20, 10**26))
