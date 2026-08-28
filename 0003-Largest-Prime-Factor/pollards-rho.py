@@ -105,6 +105,7 @@ def largest_prime_factor(n: int) -> int:
         raise ValueError("n must be at least 2")
     return max(factor_find(n))
 
+
 if __name__ == "__main__":
     print(largest_prime_factor(13195))
     print(largest_prime_factor(600851475143))
