@@ -1,3 +1,10 @@
+"""
+Project Euler Problem 4: Largest Palindrome Product
+
+Find the largest palindrome made from the product of two
+3-digit numbers."""
+
+
 def is_palindrome(n: int) -> bool:
     palindrome = True
     n = str(n)
