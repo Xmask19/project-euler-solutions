@@ -11,6 +11,6 @@ for i in range(1000):
         total += i
     elif i % 5 == 0:
         total += i
-
-print(total)
-# 233168
+if __name__ == "__main__":
+    print(total)
+    # 233168

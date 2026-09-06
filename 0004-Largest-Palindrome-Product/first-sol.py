@@ -7,11 +7,12 @@ def is_palindrome(n: int) -> bool:
     return palindrome
 
 
-largest = 0
-for i in range(900, 999):
-    for j in range(900, 999):
-        if is_palindrome(i * j):
-            if i * j > largest:
-                largest = i * j
+if __name__ == "__main__":
+    largest = 0
+    for i in range(900, 999):
+        for j in range(900, 999):
+            if is_palindrome(i * j):
+                if i * j > largest:
+                    largest = i * j
 
-print(largest)
+    print(largest)

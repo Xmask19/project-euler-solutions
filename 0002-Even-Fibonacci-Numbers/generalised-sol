@@ -15,8 +15,8 @@ def fibonacci_multiples(limit: int, m: int, r: int):
         a, b = b, a + b
         k += 1
 
-
-# Sum every 3rd Fibonacci starting at index 0 (i.e., F(0), F(3), F(6), ...)
-# But F(0)=0, so this gives the even fibonacci numbers.
-total = sum(fibonacci_multiples(4_000_000, 3, 0))
-print(total)  # 4613732
+if __name__ == "__main__":
+    # Sum every 3rd Fibonacci starting at index 0 (i.e., F(0), F(3), F(6), ...)
+    # But F(0)=0, so this gives the even fibonacci numbers.
+    total = sum(fibonacci_multiples(4_000_000, 3, 0))
+    print(total)  # 4613732

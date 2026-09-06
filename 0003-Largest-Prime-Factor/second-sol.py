@@ -23,4 +23,5 @@ def find_largest_prime(n: int) -> int:
     return round(n)
 
 
-print(find_largest_prime(600851475143))
+if __name__ == "__main__":
+    print(find_largest_prime(600851475143))

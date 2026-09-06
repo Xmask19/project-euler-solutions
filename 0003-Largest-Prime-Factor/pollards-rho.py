@@ -11,7 +11,7 @@ def miller_rabin_test(n: int) -> bool:
     a^d ≡ 1 or
     a^(d*2^r) ≡ -1 for some 0 ≤ r < s
 
-    if n is not a strong probable prime to base any base a, it is composite.
+    if n is not a strong probable prime to some base a, it is composite.
     """
     if n < 2:
         return False
@@ -24,7 +24,7 @@ def miller_rabin_test(n: int) -> bool:
         if n % p == 0:
             return False
 
-    # we want to write n-1 in the form d * 2^ s, with d odd.
+    # we want to write n-1 in the form d * 2 ^ s, with d odd.
     d = n - 1
     s = 0
     while d % 2 == 0:
