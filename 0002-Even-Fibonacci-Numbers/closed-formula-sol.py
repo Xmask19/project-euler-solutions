@@ -22,9 +22,9 @@ def fib_closed(n: int) -> int:
     """Return the n-th Fibonacci number using Binet's formula."""
     return round((phi**n - (1 - phi)**n) / sqrt5)
 
+
 if __name__ == "__main__":
     n = int(math.log(LIMIT * sqrt5) / (3 * math.log(phi)))
-
 
     if fib_closed(3 * (n + 1)) <= LIMIT:
         n += 1
