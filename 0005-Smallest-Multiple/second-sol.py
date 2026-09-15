@@ -1,3 +1,9 @@
+"""A solution to problem 5 generalised for any particular n. The primes are
+generated and their greatest power less than n is found, and the smallest
+number evenly divisible by all numbers less than n is found by multiplying
+together these prime powers. """
+
+
 from collections import defaultdict
 
 
